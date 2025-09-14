@@ -5,6 +5,15 @@ import pytest
 import pytest_asyncio
 
 from app.sandbox.core.terminal import AsyncDockerizedTerminal
+from tests.conftest import DOCKER_AVAILABLE
+
+(
+    pytest.skip(
+        "Docker not available: skipping Docker terminal tests", allow_module_level=True
+    )
+    if not DOCKER_AVAILABLE
+    else None
+)
 
 
 @pytest.fixture(scope="module")

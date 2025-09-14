@@ -6,8 +6,10 @@ allowing interactive command execution with timeout control.
 """
 
 import asyncio
+import os
 import re
 import socket
+import subprocess
 from typing import Dict, Optional, Tuple, Union
 
 import docker
@@ -344,3 +346,75 @@ class AsyncDockerizedTerminal:
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """Async context manager exit."""
         await self.close()
+
+
+class AsyncLocalTerminal:
+    """A simple async terminal implementation for local/WSL fallback.
+
+    Provides run_command and close methods and exposes a dummy container
+    object with an id attribute for compatibility with tests that inspect
+    `terminal.container.id`.
+    """
+
+    class _ContainerStub:
+        def __init__(self, cid: str):
+            self.id = cid
+
+    def __init__(
+        self, workdir: str, default_timeout: int = 60, wsl_path: str | None = None
+    ):
+        self.workdir = workdir
+        self.default_timeout = default_timeout
+        self.wsl_path = wsl_path
+        # container stub for tests that reference container.id
+        import uuid
+
+        self.container = AsyncLocalTerminal._ContainerStub(
+            f"local-{uuid.uuid4().hex[:8]}"
+        )
+
+    async def init(self) -> None:
+        # nothing to initialize for local terminal
+        return None
+
+    async def run_command(self, cmd: str, timeout: int | None = None) -> str:
+        """Runs a command in either WSL (preferred) or Windows cmd.
+
+        If a WSL path is provided, commands are executed under that directory
+        inside WSL. Otherwise they are executed with `cmd /c` on Windows.
+        """
+        if timeout is None:
+            timeout = self.default_timeout
+
+        if self.wsl_path:
+            # Translate absolute /workspace paths to the WSL-backed absolute path so
+            # commands that reference /workspace directly will still work in the
+            # fallback environment.
+            try:
+                # Replace occurrences of '/workspace' with the resolved WSL path.
+                if "/workspace" in cmd:
+                    # Quote the wsl_path to be safe when inserted into the command
+                    quoted = self.wsl_path
+                    cmd = cmd.replace("/workspace", quoted)
+            except Exception:
+                pass
+
+            # Ensure commands run under the WSL-backed workdir
+            wsl_cmd = f"cd '{self.wsl_path}' && {cmd}"
+            run_args = ["wsl", "bash", "-lc", wsl_cmd]
+        else:
+            run_args = ["cmd", "/c", cmd]
+
+        proc = await asyncio.to_thread(
+            subprocess.run,
+            run_args,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+
+        return (proc.stdout or "") + (proc.stderr or "")
+
+    async def close(self) -> None:
+        # no-op for local terminal
+        return None

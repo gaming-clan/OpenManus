@@ -1,0 +1,27 @@
+#!/bin/bash
+# OpenManus WSL Setup Script
+# Usage: bash scripts/setup_wsl.sh
+set -e
+
+# Print info
+echo "[OpenManus] Starting WSL setup for user: $USER"
+
+# Install system dependencies
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip git
+
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Upgrade pip and install Python dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Reminder for API keys
+if [ ! -f keys.txt ]; then
+  echo "[OpenManus] WARNING: keys.txt not found. Please create it and add your API keys."
+fi
+
+echo "[OpenManus] WSL setup complete. Activate your environment with: source .venv/bin/activate"
+echo "[OpenManus] To run the app: python main.py --web  or  python main.py --agent"
