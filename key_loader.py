@@ -9,11 +9,19 @@ import os
 
 
 def load_keys():
-    # Try to load from C:\Users\Administrator\keys.txt
+    # Prefer project-level keys.txt (project root). If not present, fall back to
+    # user's home directory keys.txt to preserve previous behavior.
     home = os.path.expanduser("~")
-    keys_path = os.path.join(home, "keys.txt")
+    project_keys = os.path.join(os.getcwd(), "keys.txt")
+    home_keys = os.path.join(home, "keys.txt")
     keys = {}
-    if os.path.exists(keys_path):
+    keys_path = None
+    if os.path.exists(project_keys):
+        keys_path = project_keys
+    elif os.path.exists(home_keys):
+        keys_path = home_keys
+
+    if keys_path:
         with open(keys_path, "r", encoding="utf-8") as f:
             for line in f:
                 if line.strip() and not line.strip().startswith("#"):

@@ -5,11 +5,20 @@ from pathlib import Path
 
 def load_keys(keys_path: str = None):
     import os
-
     keys = {}
     if keys_path is None:
+        # prefer project-level keys.txt then fall back to user's home
+        project_keys = os.path.join(os.getcwd(), "keys.txt")
         home = os.path.expanduser("~")
-        keys_path = os.path.join(home, "keys.txt")
+        home_keys = os.path.join(home, "keys.txt")
+        if os.path.exists(project_keys):
+            keys_path = project_keys
+        else:
+            keys_path = home_keys
+
+    if not os.path.exists(keys_path):
+        return keys
+
     with open(keys_path, "r", encoding="utf-8") as f:
         for line in f:
             if line.strip() and not line.strip().startswith("#"):

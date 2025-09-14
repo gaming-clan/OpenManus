@@ -19,8 +19,13 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # Reminder for API keys
+if [ -f keys.example.txt ] && [ ! -f keys.txt ]; then
+  echo "[OpenManus] NOTICE: A sample 'keys.example.txt' exists. Copy it to 'keys.txt' and update with your API keys:"
+  echo "  cp keys.example.txt keys.txt"
+fi
+
 if [ ! -f keys.txt ]; then
-  echo "[OpenManus] WARNING: keys.txt not found. Please create it and add your API keys."
+  echo "[OpenManus] WARNING: keys.txt not found. Create it at project root or in your home directory and add your API keys."
 fi
 
 echo "[OpenManus] WSL setup complete. Activate your environment with: source .venv/bin/activate"
