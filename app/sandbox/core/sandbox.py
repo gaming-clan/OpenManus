@@ -4,7 +4,7 @@ import os
 import tarfile
 import tempfile
 import uuid
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional
 
 # Avoid importing the Docker SDK here so we default to the WSL/local fallback
 # implementation on systems without Docker. Tests and higher-level code still
