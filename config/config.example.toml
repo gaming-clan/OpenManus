@@ -1,18 +1,57 @@
 # Global LLM configuration
 [llm]
-model = "claude-3-7-sonnet-20250219"       # The LLM model to use
-base_url = "https://api.anthropic.com/v1/" # API endpoint URL
-api_key = "YOUR_API_KEY"                   # Your API key
-max_tokens = 8192                          # Maximum number of tokens in the response
-temperature = 0.0                          # Controls randomness
+# Default LLM provider (choose: anthropic, openai, azure_openai, gemini, deepseek)
+provider = "anthropic"
+# Model and endpoint for each provider
+[llm.anthropic]
+model = "claude-3-7-sonnet-20250219"
+base_url = "https://api.anthropic.com/v1/"
+api_key = "${Anthropic}"
+max_tokens = 1000000
+temperature = 0.0
 
-# [llm] # Amazon Bedrock
-# api_type = "aws"                                       # Required
-# model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0" # Bedrock supported modelID
-# base_url = "bedrock-runtime.us-west-2.amazonaws.com"   # Not used now
-# max_tokens = 8192
-# temperature = 1.0
-# api_key = "bear"                                       # Required but not used for Bedrock
+[llm.openai]
+model = "gpt-4o"
+base_url = "https://api.openai.com/v1/"
+api_key = "${OpenAI}"
+max_tokens = 1000000
+temperature = 0.0
+
+[llm.azure_openai]
+model = "gpt-4o"
+base_url = "https://YOUR_AZURE_ENDPOINT/openai/deployments/YOUR_DEPLOYMENT_ID"
+api_key = "${Azure OpenAI}"
+api_version = "2024-08-01-preview"
+max_tokens = 1000000
+temperature = 0.0
+
+[llm.gemini]
+model = "gemini-1.5-pro"
+base_url = "https://generativelanguage.googleapis.com/v1beta"
+api_key = "${Gemini}"
+max_tokens = 1000000
+temperature = 0.0
+
+[llm.deepseek]
+model = "deepseek-chat"
+base_url = "https://api.deepseek.com/v1/"
+api_key = "${DeepSeek}"
+max_tokens = 1000000
+temperature = 0.0
+
+# The config loader should read API keys from keys.txt in the format:
+# OpenAI=openai_api_key
+# Anthropic=anthropic_api_key
+# Azure OpenAI=azure_openai_api_key
+# Gemini=gemini_api_key
+# DeepSeek=deepseek_api_key
+#
+# [WSL/AUTONOMOUS MODE]
+# To enable autonomous operation in WSL, ensure your agent mode is enabled (see main_Version2.py --agent)
+# and that your API key and model support long context windows (unlimited tokens).
+#
+
+
 
 # [llm] #AZURE OPENAI:
 # api_type= 'azure'
@@ -102,4 +141,4 @@ server_reference = "app.mcp.server" # default server module reference
 # Optional Runflow configuration
 # Your can add additional agents into run-flow workflow to solve different-type tasks.
 [runflow]
-use_data_analysis_agent = false     # The Data Analysi Agent to solve various data analysis tasks
+use_data_analysis_agent = true      # The Data Analysis Agent to solve various data analysis tasks

@@ -44,7 +44,13 @@ class SandboxManager:
         self.cleanup_interval = cleanup_interval
 
         # Docker client
-        self._client = docker.from_env()
+        try:
+            # Try to create a docker client; if unavailable, fall back to None
+            self._client = docker.from_env()
+            # lightweight check
+            self._client.ping()
+        except Exception:
+            self._client = None
 
         # Resource mappings
         self._sandboxes: Dict[str, DockerSandbox] = {}
@@ -71,6 +77,11 @@ class SandboxManager:
         Returns:
             bool: Whether image is available.
         """
+        # If docker client isn't available (WSL/local fallback) then consider
+        # the image 'available' because we won't actually pull or run it.
+        if not self._client:
+            return True
+
         try:
             self._client.images.get(image)
             return True

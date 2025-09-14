@@ -1,6 +1,21 @@
-from flask import request, jsonify, send_from_directory
-from backend.agent_controller import handle_chat, handle_agent, get_logs
-from utils.key_loader import load_keys, save_keys
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+from flask import jsonify, request, send_from_directory
+
+try:
+    from backend.agent_controller import get_logs, handle_agent, handle_chat
+except ImportError:
+    from backend_agent_controller import get_logs, handle_agent, handle_chat
+
+
+try:
+    from key_loader import load_keys, save_keys
+except ImportError:
+    from .key_loader import load_keys, save_keys
+
 
 def register_routes(app):
     @app.route("/api/chat", methods=["POST"])
@@ -30,7 +45,8 @@ def register_routes(app):
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
     def serve(path):
-        if path != "" and os.path.exists(app.static_folder + '/' + path):
+        file_path = os.path.join(app.static_folder, path)
+        if path != "" and os.path.exists(file_path):
             return send_from_directory(app.static_folder, path)
         else:
             return send_from_directory(app.static_folder, "index.html")

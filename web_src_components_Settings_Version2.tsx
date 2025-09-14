@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
+type KeysMap = Record<string, string | null>;
+
 export default function Settings() {
-  const [keys, setKeys] = useState({});
+  const [keys, setKeys] = useState<KeysMap>({});
   const [edit, setEdit] = useState(false);
 
   useEffect(() => {
-    fetch('/api/keys').then(r => r.json()).then(setKeys);
+    fetch('/api/keys')
+      .then(r => r.json())
+      .then((data) => setKeys(data as KeysMap));
   }, []);
 
   function save() {
@@ -32,7 +36,7 @@ export default function Settings() {
           {Object.entries(keys).map(([k, v]) => (
             <div key={k}>
               <label>{k}</label>
-              <input value={v} type="text" onChange={e => setKeys({ ...keys, [k]: e.target.value })} />
+              <input value={v ?? ''} type="text" onChange={e => setKeys({ ...keys, [k]: e.target.value })} />
             </div>
           ))}
           <button onClick={save}>Save</button>

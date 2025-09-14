@@ -1,6 +1,13 @@
 import React from 'react';
 
-export default function Sidebar({ mode, setMode }) {
+type SidebarMode = 'chat' | 'agent' | 'settings';
+
+interface SidebarProps {
+  mode: SidebarMode;
+  setMode: (mode: SidebarMode) => void;
+}
+
+export default function Sidebar({ mode, setMode }: SidebarProps) {
   return (
     <nav className="sidebar">
       <h2>OpenManus</h2>
