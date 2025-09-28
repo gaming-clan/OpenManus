@@ -28,6 +28,18 @@ def register_routes(app):
         data = request.get_json()
         return jsonify(handle_agent(data))
 
+    @app.route("/api/agent/start", methods=["POST"])
+    def agent_start():
+        data = request.get_json() or {}
+        data["action"] = "start"
+        return jsonify(handle_agent(data))
+
+    @app.route("/api/agent/stop", methods=["POST"])
+    def agent_stop():
+        data = request.get_json() or {}
+        data["action"] = "stop"
+        return jsonify(handle_agent(data))
+
     @app.route("/api/agent/logs", methods=["GET"])
     def logs():
         return jsonify(get_logs())
@@ -40,6 +52,11 @@ def register_routes(app):
             keys = request.get_json()
             save_keys(keys)
             return jsonify({"status": "ok"})
+
+    # Health check endpoint
+    @app.route("/api/health", methods=["GET"])
+    def health():
+        return jsonify({"status": "ok", "message": "OpenManus backend is running"})
 
     # Serve frontend
     @app.route("/", defaults={"path": ""})

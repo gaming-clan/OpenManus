@@ -1,8 +1,18 @@
 import argparse
 import asyncio
+import sys
+import os
 
-from app.agent.manus import Manus
-from app.logger import logger
+# Add the current directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+try:
+    from app.agent.manus import Manus
+    from app.logger import logger
+except ImportError:
+    print("Warning: app module not found. This script requires the full OpenManus agent implementation.")
+    print("For web interface, use: python3 test_server.py")
+    sys.exit(1)
 
 
 async def main():

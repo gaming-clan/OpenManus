@@ -5,11 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenManus</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 
 <body>
-    <div id="root"></div>
-    <script src="/static/bundle.js"></script>
+    <div id="app">
+        <header>
+            <h1>OpenManus</h1>
+            <nav>
+                <button id="agent-mode-btn" class="nav-btn active">Agent Mode</button>
+                <button id="chat-mode-btn" class="nav-btn">Chat Mode</button>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Agent Mode Section -->
+            <section id="agent-mode" class="mode-section active">
+                <div class="mode-header">
+                    <h2>Agent Mode</h2>
+                    <button id="refresh-logs-btn" class="refresh-btn">Refresh Logs</button>
+                </div>
+                <div class="agent-controls">
+                    <div class="control-group">
+                        <label for="agent-select">Select Agent:</label>
+                        <select id="agent-select">
+                            <option value="default">Default Agent</option>
+                            <!-- More agents can be added dynamically -->
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <button id="start-agent-btn" class="action-btn">Start Agent</button>
+                        <button id="stop-agent-btn" class="action-btn">Stop Agent</button>
+                    </div>
+                </div>
+                <div class="logs-container">
+                    <h3>Agent Logs</h3>
+                    <pre id="agent-logs" class="logs-display">Loading logs...</pre>
+                </div>
+            </section>
+
+            <!-- Chat Mode Section -->
+            <section id="chat-mode" class="mode-section">
+                <div class="mode-header">
+                    <h2>Chat Mode</h2>
+                    <button id="clear-chat-btn" class="clear-btn">Clear Chat</button>
+                </div>
+                <div class="chat-container">
+                    <div id="chat-history" class="chat-history"></div>
+                    <div class="chat-input-container">
+                        <textarea id="chat-textarea" placeholder="Type your message..." rows="3"></textarea>
+                        <button id="send-button" class="send-btn">Send</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 OpenManus - Open Source AI Agent Platform</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
 </body>
 
 </html>
